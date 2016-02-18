@@ -1,55 +1,57 @@
 ﻿
-    using UnityEditorInternal;
-    using UnityEngine;
+using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform Player;
+    public GameObject Player;  
+    public float OffsetX = 0;
+    public float OffsetY = 6;
+    public float OffsetZ = -10;
 
-    public Vector3
-        Margin,
-        Smoothing;
+    public Vector3 Smoothing,
+        Margin;
 
-    public BoxCollider Bounds;
 
-    private Vector3
-        _min,
-        _max;
 
-    public bool isFollowing { set; get; }
+
+    private Vector3 _relCameraPos;
+    private float _relCameraPosMag;
+    private Vector3 _newPos;
+    private float _followNow;
+    private bool _isFollowing;
 
     public void Start()
     {
-        _min = Bounds.bounds.min;
-        _max = Bounds.bounds.max;
-        isFollowing = true;
+        _isFollowing = true;
     }
 
-    public void Update()
+
+    public void LateUpdate()
     {
+
         var x = transform.position.x;
         var y = transform.position.y;
         var z = transform.position.z;
 
-        if (isFollowing)
+
+        if (Player != null)
         {
-            if (Mathf.Abs(x - Player.position.x) > Margin.x)
-                x = Mathf.Lerp(x, Player.position.x, Smoothing.x * Time.deltaTime);
-            if (Mathf.Abs(y - Player.position.y) > Margin.y)
-                y = Mathf.Lerp(y, Player.position.y, Smoothing.y * Time.deltaTime);
-            if (Mathf.Abs(z - Player.position.z) > Margin.z)
-                z = Mathf.Lerp(z, Player.position.z, Smoothing.z * Time.deltaTime);
+            if (_isFollowing)
+            {
+                if (Mathf.Abs(x - Player.transform.position.x) > Margin.x)
+                    x = Mathf.Lerp(x, Player.transform.position.x + OffsetX, Smoothing.x * Time.deltaTime);
+
+                if (Mathf.Abs(y - Player.transform.position.y) > Margin.y)
+                    y = Mathf.Lerp(y, Player.transform.position.y + OffsetY, Smoothing.y * Time.deltaTime);
+                if (Mathf.Abs(z - Player.transform.position.z) > Margin.z)
+                    z = Mathf.Lerp(z, Player.transform.position.z + OffsetZ, Smoothing.z * Time.deltaTime);
+            }
+
+            // z = Player.transform.position.z;
+            // y = Player.transform.position.y;
+
+            this.transform.position = new Vector3(x, y, z);
         }
 
-        var cameraHalfWidth = GetComponent<Camera>().orthographicSize * ((float)Screen.width / Screen.height);
-
-        x = Mathf.Clamp(x, _min.x + cameraHalfWidth, _max.x - cameraHalfWidth);
-        y = Mathf.Clamp(y, _min.y + GetComponent<Camera>().orthographicSize, _max.y - GetComponent<Camera>().orthographicSize);
-        z = Mathf.Clamp(z, _min.z + GetComponent<Camera>().orthographicSize,
-            _max.z - GetComponent<Camera>().orthographicSize);
-
-
-
-        transform.position = new Vector3(x, y, z);
     }
 }

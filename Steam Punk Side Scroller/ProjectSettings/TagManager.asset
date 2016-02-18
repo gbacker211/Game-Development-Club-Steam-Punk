@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - FireLayer
   - 
   - 
   - 
@@ -40,4 +40,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: 0
+    uniqueID: 441335277
     locked: 0
